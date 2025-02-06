@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes_and_goal/global_variables.dart';
 import 'package:notes_and_goal/goals/goals_homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,6 +43,10 @@ class _EditGoalsState extends State<EditGoals> {
     
     //set local variables stored in device
     prefs.setStringList("listOfGoals", storedGoals!);
+
+    //we must also update the global variables becuase it is used when adding 
+    //goals to screen
+    GlobalVariables.localGoalsArray = storedGoals!;
   }
   
   final String title;

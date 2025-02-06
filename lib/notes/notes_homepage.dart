@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:notes_and_goal/loading_screen.dart';
 import 'package:notes_and_goal/notes/create_notes_page.dart';
 import 'package:notes_and_goal/notes/edit_notes_page.dart';
 import 'package:notes_and_goal/notes/notes_preview_card.dart';
@@ -21,6 +22,7 @@ class _NotesHomePageState extends State<NotesHomePage> {
   @override
   void initState()
   {
+    print("init notes home");
     super.initState();
   }
 
@@ -67,7 +69,7 @@ class _NotesHomePageState extends State<NotesHomePage> {
           //snapshot has a variety of methods and properties
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show a loading indicator while waiting for data
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingScreen();
           } else if (snapshot.hasError) {
             // Handle errors
             return Center(child: Text('Error: ${snapshot.error}'));

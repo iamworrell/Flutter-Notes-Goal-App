@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes_and_goal/global_variables.dart';
 import 'package:notes_and_goal/notes/notes_homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,6 +50,10 @@ class _EditNotesPageState extends State<EditNotesPage> {
     
     //set local variables stored in device
     prefs.setStringList("listOfNotes", storedNotes!);
+
+    //we must also update the global variables becuase it is used when adding 
+    //notes to screen
+    GlobalVariables.localNotesArray = storedNotes!;
   }
 
   

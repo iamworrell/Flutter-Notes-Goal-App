@@ -152,7 +152,31 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
                     )
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      foregroundColor: Colors.white, 
+                      backgroundColor: Colors.grey[500], 
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    onPressed: () => {
+                      Navigator.pop(context),
+                    }, 
+                    child: const Text("Cancel")),
+                      ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      foregroundColor: Colors.white, 
+                      backgroundColor: Colors.blue[500], 
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
                     onPressed: () => {
                       setState(() async {
                         //get access to the shared preference object
@@ -167,14 +191,20 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
                         //update local variable
                         prefs.setStringList("listOfNotes", GlobalVariables.localNotesArray);
                         prefs.setInt("notesId", noteIdentificationNumber);
+
+                        
                       //
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => const NotesHomePage()),
                       );
                       }),
+                     
                     }, 
                     child: const Text("Save"))
+
+                    ],),
+                  
               ],
             ),
           ],
