@@ -89,7 +89,10 @@ class _NotesHomePageState extends State<NotesHomePage> {
                       child: ElevatedButton(
                     onPressed: () => {
                       
-                  }, child: Text("Favorites")),
+                  }, 
+                  
+                  
+                  child: Text("Favorites")),
                     ),
                      
                     Container(
@@ -144,7 +147,7 @@ class _NotesHomePageState extends State<NotesHomePage> {
                         Navigator.of(context).push(
                           //pass note data to edit notes page, 
                           //storedNotes![index] - gives us the specific note that is selected
-                          MaterialPageRoute(builder: (context) => EditNotesPage(note: storedNotes![index],title: notesConvertedToMap["title"], body: notesConvertedToMap["body"]))
+                          MaterialPageRoute(builder: (context) => EditNotesPage(note: storedNotes![index],title: notesConvertedToMap["title"], body: notesConvertedToMap["body"], favoriteStatusConfirmed:  notesConvertedToMap["favorite"]))
                         ),
                       },
                       //pass object keys as arguments to the Notes Preview Card Widget

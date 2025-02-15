@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:notes_and_goal/global_variables.dart';
 import 'package:notes_and_goal/goals/goals_homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -150,6 +151,10 @@ class _GoalsDeadlineState extends State<GoalsDeadline> {
 
                       //update local storage
                       prefs.setStringList("listOfGoals", volatileListOfGoals!),
+
+                      //update global array as well, because its still pulling from it
+                      GlobalVariables.localGoalsArray.remove(goalObject),
+                      GlobalVariables.localGoalsArray.add(goalConvertedToString),
 
                       Navigator.pushNamedAndRemoveUntil(context, GoalsHomePage.route, arguments: GoalsDeadline,(Route<dynamic> route) => false),
                     }, 

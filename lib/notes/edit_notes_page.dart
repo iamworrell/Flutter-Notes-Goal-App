@@ -1,15 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:notes_and_goal/global_variables.dart';
 import 'package:notes_and_goal/notes/notes_homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditNotesPage extends StatefulWidget {
-  const EditNotesPage({super.key, required this.title, required this.body, required this.note});
+  const EditNotesPage({super.key, required this.title, required this.body, required this.note, required this.favoriteStatusConfirmed});
   final String title;
   final String body;
   final String note;
+  final bool favoriteStatusConfirmed;
   @override
-  State<EditNotesPage> createState() => _EditNotesPageState(title, body, note);
+  State<EditNotesPage> createState() => _EditNotesPageState(title, body, note, favoriteStatusConfirmed);
 }
 
 class _EditNotesPageState extends State<EditNotesPage> {
@@ -24,9 +27,10 @@ class _EditNotesPageState extends State<EditNotesPage> {
   final String title;
   final String body;
   final String note;
+  bool favoriteStatusConfirmed;
 
 
-  _EditNotesPageState(this.title, this.body, this.note);
+  _EditNotesPageState(this.title, this.body, this.note, this.favoriteStatusConfirmed);
   //keeps track of what user is typing
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
@@ -57,9 +61,12 @@ class _EditNotesPageState extends State<EditNotesPage> {
   }
 
   
+  
+
+  String favoriteStatus = "";
   @override
   Widget build(BuildContext context) {
-    
+    SharedPreferences prefs;
 
    
 
@@ -67,6 +74,28 @@ class _EditNotesPageState extends State<EditNotesPage> {
     _titleController.text = title;
     _bodyController.text = body;
 
+    int indexOfNote;
+    var noteConvertedToMap;
+    var noteConvertedToString;
+    var favoriteIconColor = Color(0xffb9bcc3);
+
+    if(favoriteStatusConfirmed ==  true)
+    {
+      favoriteStatus = "added";
+    }else{
+      favoriteStatus = "removed";
+    }
+
+    if(favoriteStatusConfirmed ==  false)
+    {
+      favoriteIconColor = Colors.grey;
+    }
+    if(favoriteStatusConfirmed ==  true)
+    {
+      favoriteIconColor = const Color(0xfffb7aa6);
+    }
+  
+    
     return Scaffold(
             //put the appbar above of the body and not ontop of it
             extendBodyBehindAppBar: false,
@@ -124,6 +153,37 @@ class _EditNotesPageState extends State<EditNotesPage> {
                     decoration: InputDecoration(
                       hintText: "Title",
                       border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        tooltip: "Added",
+                        icon: Icon(
+                        Icons.favorite,
+                        color: favoriteIconColor,
+                        size: 30.0,
+                        ), 
+                        onPressed: () => { 
+                          if(favoriteStatus == "added")
+                        {
+                          
+                          setState(() {
+                            favoriteStatus = "removed";
+                            favoriteStatusConfirmed = false;
+                            favoriteIconColor = Colors.grey;
+                            
+                            print(favoriteStatus);
+                          })
+                        }else
+                        {
+                          setState(() {
+                            favoriteStatus = "added";
+                            favoriteStatusConfirmed = true;
+                            favoriteIconColor = const Color(0xfffb7aa6);
+                            print(favoriteStatus);
+                          })
+                        }
+                         },
+
+                      ),
+                      
                     ),
                 ),),
                 
@@ -179,7 +239,42 @@ class _EditNotesPageState extends State<EditNotesPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-                    onPressed: () => {
+                    onPressed: () async => {
+                      //get access to the shared preference object
+                      prefs = await SharedPreferences.getInstance(),
+                      //locate index of goal we are giving deadline to
+                      indexOfNote = storedNotes!.indexOf(note),
+                      
+                      //convert json string to map
+                      noteConvertedToMap = jsonDecode(storedNotes![indexOfNote]),
+
+                      //update note
+                      noteConvertedToMap["body"] = _bodyController.text,
+                      noteConvertedToMap["title"] = _titleController.text,
+                      noteConvertedToMap["favorite"] = favoriteStatusConfirmed,
+                      
+
+
+                      
+                      //update the current local storage of goals with the new array
+                      //remove old element
+                      storedNotes?.remove(storedNotes![indexOfNote]),
+
+                      //convert goal object to string
+                      noteConvertedToString = jsonEncode(noteConvertedToMap),
+
+                      //insert object into original index position
+                      storedNotes?.insert(indexOfNote, noteConvertedToString),
+
+                      //update local storage
+                      prefs.setStringList("listOfNotes", storedNotes!),
+
+
+                      //update global array as well, because its still pulling from it
+                      GlobalVariables.localNotesArray.remove(note),
+
+                      //insert object into original index position
+                      GlobalVariables.localNotesArray.insert(indexOfNote, noteConvertedToString),
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => const NotesHomePage()),
